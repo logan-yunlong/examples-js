@@ -1,5 +1,8 @@
-const http = require('http');
-const {host, port} = require('./config')
+import * as http from "http";
+import {expect} from "@jest/globals";
+
+const port = 3000
+const host = '127.0.0.1'
 const querystring = require("querystring");
 
 const getByHttp = () => {
@@ -7,6 +10,7 @@ const getByHttp = () => {
         hostname: host, port, path: '/', method: "GET",
     }
     const req = http.request(options, res => {
+        expect(res.statusCode === 200);
         console.log('status:' + res.statusCode)
         console.log('headers:' + JSON.stringify(res.headers))
         res.setEncoding('utf-8')
@@ -14,13 +18,9 @@ const getByHttp = () => {
             console.log(chunk)
         })
     })
-    req.on('data', (chunk) => {
-        console.log('req chunk' + chunk);
-    })
     req.end();
 }
 
-// getByHttp();
 
 const postByHttp = () => {
     const postData = querystring.stringify({
@@ -47,10 +47,10 @@ const postByHttp = () => {
     req.on('error', (e) => {
         console.error(`problem with request: ${e.message}`);
     });
-    req.writable.writableLength
 
-// Write data to request body
+    // Write data to request body
     req.write(postData);
     req.end();
 }
-postByHttp();
+
+export {postByHttp, getByHttp}
